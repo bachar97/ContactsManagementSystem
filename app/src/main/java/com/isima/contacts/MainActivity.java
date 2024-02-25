@@ -11,7 +11,7 @@ import androidx.appcompat.widget.SearchView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ContactsAdapter.ContactClickListener {
 
     private RecyclerView recyclerViewContacts;
     private FloatingActionButton fabAddContact;
@@ -29,13 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize the contacts list
         List<Contact> contacts = new ArrayList<>();
-        // Dummy data for testing
         contacts.add(new Contact("John Doe", "1234567890", "123 Main St"));
         contacts.add(new Contact("Jane Smith", "0987654321", "456 Elm St"));
         // More dummy contacts can be added here
 
-        // Create the adapter with the list of contacts
-        adapter = new ContactsAdapter(contacts);
+        // Initialize the adapter with the list of contacts and 'this' as the click listener
+        adapter = new ContactsAdapter(contacts, this);
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewContacts.setAdapter(adapter);
 
@@ -67,14 +66,20 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Extract the contact details from the intent
             String name = data.getStringExtra("contact_name");
             String phone = data.getStringExtra("contact_phone");
             String address = data.getStringExtra("contact_address");
             Contact newContact = new Contact(name, phone, address);
-            
-            // Add the new contact to your list and notify the adapter
             adapter.addContact(newContact);
         }
+    }
+
+    @Override
+    public void onContactClick(Contact contact) {
+        Intent intent = new Intent(MainActivity.this, ContactDetailsActivity.class);
+        intent.putExtra("contact_name", contact.getName());
+        intent.putExtra("contact_phone", contact.getPhoneNumber());
+        intent.putExtra("contact_address", contact.getAddress());
+        startActivity(intent);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.contactsapp;
+package com.isima.contacts;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
