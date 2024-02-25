@@ -35,7 +35,13 @@ public class MainActivity extends AppCompatActivity {
         // More dummy contacts can be added here
 
         // Create the adapter with the list of contacts
-        adapter = new ContactsAdapter(contacts);
+        adapter = new ContactsAdapter(contacts, new ContactsAdapter.ContactClickListener() {
+            @Override
+            public void onContactClick(Contact contact) {
+                // Handle the contact click event
+                // For example, you could start a new activity with the contact details
+            }
+        });
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewContacts.setAdapter(adapter);
 
