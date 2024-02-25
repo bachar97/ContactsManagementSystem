@@ -28,6 +28,10 @@ public class AddContactActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_STORAGE = 2;
     private static final String TAG = "AddContactActivity"; // Tag for log messages
 
+    // New variables for edit mode
+    private boolean isEditMode = false;
+    private String editingContactId; // You might not need this depending on your implementation
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +48,7 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "Upload button clicked");
-                openFileChooser();
+                openImagePicker();
             }
         });
 
@@ -54,19 +58,35 @@ public class AddContactActivity extends AppCompatActivity {
                 saveContact();
             }
         });
+
+        // Check if we're in edit mode
+        checkForEditMode();
     }
 
-    private void openFileChooser() {
-        Log.d(TAG, "Attempting to open file chooser");
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Requesting storage permission");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
-        } else {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    private void checkForEditMode() {
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            isEditMode = extras.getBoolean("edit_mode", false);
+            if (isEditMode) {
+                editingContactId = extras.getString("contact_id"); // Only needed if you use a database ID
+                nameEditText.setText(extras.getString("contact_name"));
+                phoneEditText.setText(extras.getString("contact_phone"));
+                addressEditText.setText(extras.getString("contact_address"));
+                // If an image URI was passed, display the image
+                if (extras.containsKey("contact_photo")) {
+                    imageUri = Uri.parse(extras.getString("contact_photo"));
+                    contactPhotoImageView.setImageURI(imageUri);
+                    // Consider handling persistable URI permission if needed
+                }
+            }
         }
+    }
+
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
     @Override
@@ -75,7 +95,7 @@ public class AddContactActivity extends AppCompatActivity {
         Log.d(TAG, "onRequestPermissionsResult: requestCode=" + requestCode);
         if (requestCode == PERMISSION_REQUEST_STORAGE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Storage permission granted");
-            openFileChooser();
+            openImagePicker();
         } else {
             Log.d(TAG, "Storage permission denied");
         }
@@ -86,21 +106,12 @@ public class AddContactActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
             if (data != null && data.getData() != null) {
-                imageUri = data.getData();
-
-                // Attempt to take the persistable URI permission grant
-                try {
-                    int takeFlags = data.getFlags();
-                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    // Check for the freshest data.
-                    getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
-                } catch (SecurityException e) {
-                    // Handle the exception here
-                    Log.e(TAG, "Error taking persistable URI permission", e);
-                }
-
+                Uri imageUri = data.getData();
                 contactPhotoImageView.setImageURI(imageUri);
+                // Persist the permission to access the image URI
+                final int takeFlags = data.getFlags()
+                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
             }
         }
     }

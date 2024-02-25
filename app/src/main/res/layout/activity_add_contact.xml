@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".AddContactActivity">
 
     <ImageView
         android:id="@+id/contact_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@android:drawable/ic_menu_camera" />
+        android:layout_gravity="center_horizontal"
+        android:src="@android:drawable/ic_menu_camera"
+        android:contentDescription="@string/contact_photo" />
 
     <Button
         android:id="@+id/button_upload_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Photo" />
+        android:layout_gravity="center_horizontal"
+        android:text="@string/upload_photo" />
 
     <EditText
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name" />
+        android:hint="@string/name"
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/editTextPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Phone" />
+        android:hint="@string/phone"
+        android:inputType="phone" />
 
     <EditText
         android:id="@+id/editTextAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Address" />
+        android:hint="@string/address"
+        android:inputType="textPostalAddress" />
 
     <Button
         android:id="@+id/buttonSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save" />
+        android:layout_marginTop="16dp"
+        android:text="@string/save" />
 
 </LinearLayout>

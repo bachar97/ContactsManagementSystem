@@ -1,26 +1,25 @@
 package com.isima.contacts;
 
-import static android.content.ContentValues.TAG;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.FileNotFoundException;
+import androidx.appcompat.app.AppCompatActivity;
+import java.io.FileDescriptor;
 import java.io.IOException;
-import java.io.InputStream;
+
+import android.view.Menu;
 
 public class ContactDetailsActivity extends AppCompatActivity {
 
     private TextView contactName, contactPhoneNumber, contactAddress;
-    private ImageView contactPhoto, callButton;
+    private ImageView contactPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,57 +29,91 @@ public class ContactDetailsActivity extends AppCompatActivity {
         contactName = findViewById(R.id.contactName);
         contactPhoneNumber = findViewById(R.id.contactPhoneNumber);
         contactAddress = findViewById(R.id.contactAddress);
-        contactPhoto = findViewById(R.id.contactPhoto); // Assuming this is your ImageView for the photo
-        callButton = findViewById(R.id.callButton);
+        contactPhoto = findViewById(R.id.contactPhoto); // Reference to the ImageView
 
-        // Retrieve and set contact data from intent
+        // Retrieve data from intent
         String photoUriString = getIntent().getStringExtra("contact_photo");
         String name = getIntent().getStringExtra("contact_name");
         String phone = getIntent().getStringExtra("contact_phone");
         String address = getIntent().getStringExtra("contact_address");
 
+        // Set the text fields
         contactName.setText(name);
         contactPhoneNumber.setText(phone);
         contactAddress.setText(address);
 
-        // Use the provided snippet here to load the photo
+        // Load the photo from URI and set it to the ImageView
         if (photoUriString != null && !photoUriString.isEmpty()) {
             Uri photoUri = Uri.parse(photoUriString);
             try {
-                InputStream inputStream = getContentResolver().openInputStream(photoUri);
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                Bitmap bitmap = getBitmapFromUri(photoUri);
                 contactPhoto.setImageBitmap(bitmap);
-                inputStream.close(); // Don't forget to close the InputStream
-            } catch (FileNotFoundException e) {
-                Log.e(TAG, "File not found", e);
-            } catch (SecurityException e) {
-                Log.e(TAG, "Security Exception: Do not have permission to access this file", e);
             } catch (IOException e) {
-                Log.e(TAG, "IOException: Error closing input stream", e);
+                Log.e("ContactDetailsActivity", "Error loading image", e);
             }
-        }
-
-        // Dial action
-        callButton.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_DIAL);
-            intent.setData(Uri.parse("tel:" + phone));
-            startActivity(intent);
-        });
-
-        // Enable the back arrow in the ActionBar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+
+        options.inSampleSize = calculateInSampleSize(options, 120, 120);
+
+        options.inJustDecodeBounds = false;
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle the back arrow click here
-        if (item.getItemId() == android.R.id.home) {
-            finish(); // Close this activity and return to the previous activity
+        int id = item.getItemId();
+
+        if (id == R.id.action_edit) {
+            // Start AddContactActivity with the intent filled with contact details for editing
+            Intent intent = new Intent(this, AddContactActivity.class);
+            intent.putExtra("edit_mode", true);
+            intent.putExtra("contact_name", contactName.getText().toString());
+            intent.putExtra("contact_phone", contactPhoneNumber.getText().toString());
+            intent.putExtra("contact_address", contactAddress.getText().toString());
+
+            // Assuming you're storing the image URI as a String or have a way to retrieve it
+            // If you saved the URI in imageUri variable when setting the ImageView, use it here
+            // intent.putExtra("contact_photo", imageUri.toString());
+
+            startActivity(intent);
+            return true;
+        } else if (id == android.R.id.home) {
+            finish();
             return true;
         }
+        // Implement other cases if necessary
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.contact_details_menu, menu);
+        return true;
     }
 }

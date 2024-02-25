@@ -30,6 +30,4 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- If targeting Android 6.0 (API level 23) or higher, these permissions need to be requested at runtime. -->
-
-
 </manifest>
