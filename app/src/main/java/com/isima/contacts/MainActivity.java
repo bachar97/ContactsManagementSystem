@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
         // Initialize the contacts list
         List<Contact> contacts = new ArrayList<>();
-        contacts.add(new Contact("John Doe", "1234567890", "123 Main St"));
-        contacts.add(new Contact("Jane Smith", "0987654321", "456 Elm St"));
+        contacts.add(new Contact("John Doe", "1234567890", "123 Main St", "./res/drawable/photo.jpg"));
+        contacts.add(new Contact("Jane Smith", "0987654321", "456 Elm St", "./res/drawable/photo.jpg"));
         // More dummy contacts can be added here
 
         // Initialize the adapter with the list of contacts and 'this' as the click listener
@@ -66,10 +66,11 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
+            String photo = data.getStringExtra("contact_photo");
             String name = data.getStringExtra("contact_name");
             String phone = data.getStringExtra("contact_phone");
             String address = data.getStringExtra("contact_address");
-            Contact newContact = new Contact(name, phone, address);
+            Contact newContact = new Contact(photo, name, phone, address);
             adapter.addContact(newContact);
         }
     }
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
     @Override
     public void onContactClick(Contact contact) {
         Intent intent = new Intent(MainActivity.this, ContactDetailsActivity.class);
+        intent.putExtra("contact_photo", contact.getPhotoUri());
         intent.putExtra("contact_name", contact.getName());
         intent.putExtra("contact_phone", contact.getPhoneNumber());
         intent.putExtra("contact_address", contact.getAddress());

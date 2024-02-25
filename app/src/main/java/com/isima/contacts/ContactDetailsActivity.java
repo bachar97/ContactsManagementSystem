@@ -21,10 +21,11 @@ public class ContactDetailsActivity extends AppCompatActivity {
         contactName = findViewById(R.id.contactName);
         contactPhoneNumber = findViewById(R.id.contactPhoneNumber);
         contactAddress = findViewById(R.id.contactAddress);
-        contactPhoto = findViewById(R.id.contactPhoto); // Assuming this is for future use
+        contactPhoto = findViewById(R.id.contactPhoto); // ImageView for the contact photo
         callButton = findViewById(R.id.callButton);
 
-        // Retrieve and set contact data from intent
+        // Retrieve contact data from intent
+        String photoUriString = getIntent().getStringExtra("contact_photo");
         String name = getIntent().getStringExtra("contact_name");
         String phone = getIntent().getStringExtra("contact_phone");
         String address = getIntent().getStringExtra("contact_address");
@@ -33,6 +34,16 @@ public class ContactDetailsActivity extends AppCompatActivity {
         contactPhoneNumber.setText(phone);
         contactAddress.setText(address);
 
+        // Set the contact photo if URI string is not null or empty
+        if (photoUriString != null && !photoUriString.isEmpty()) {
+            Uri photoUri = Uri.parse(photoUriString);
+            contactPhoto.setImageURI(photoUri);
+        } else {
+            // Optionally set a default or placeholder image if no photo is provided
+            contactPhoto.setImageResource(R.mipmap.ic_launcher); // Use a default/placeholder image resource
+        }
+
+        // Dial action
         callButton.setOnClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:" + phone));
@@ -47,9 +58,9 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle back arrow click here
+        // Handle the back arrow click here
         if (item.getItemId() == android.R.id.home) {
-            finish(); // Close this activity and return to preview activity (if there is any)
+            finish(); // Close this activity and return to the previous activity
             return true;
         }
         return super.onOptionsItemSelected(item);
