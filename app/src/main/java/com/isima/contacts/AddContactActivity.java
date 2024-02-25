@@ -84,13 +84,27 @@ public class AddContactActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            contactPhotoImageView.setImageURI(imageUri);
-            Log.d(TAG, "Image selected: " + imageUri.toString());
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                imageUri = data.getData();
+
+                // Attempt to take the persistable URI permission grant
+                try {
+                    int takeFlags = data.getFlags();
+                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    // Check for the freshest data.
+                    getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
+                } catch (SecurityException e) {
+                    // Handle the exception here
+                    Log.e(TAG, "Error taking persistable URI permission", e);
+                }
+
+                contactPhotoImageView.setImageURI(imageUri);
+            }
         }
     }
+
 
     private void saveContact() {
         Intent replyIntent = new Intent();

@@ -1,12 +1,21 @@
 package com.isima.contacts;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ContactDetailsActivity extends AppCompatActivity {
 
@@ -21,10 +30,10 @@ public class ContactDetailsActivity extends AppCompatActivity {
         contactName = findViewById(R.id.contactName);
         contactPhoneNumber = findViewById(R.id.contactPhoneNumber);
         contactAddress = findViewById(R.id.contactAddress);
-        contactPhoto = findViewById(R.id.contactPhoto); // ImageView for the contact photo
+        contactPhoto = findViewById(R.id.contactPhoto); // Assuming this is your ImageView for the photo
         callButton = findViewById(R.id.callButton);
 
-        // Retrieve contact data from intent
+        // Retrieve and set contact data from intent
         String photoUriString = getIntent().getStringExtra("contact_photo");
         String name = getIntent().getStringExtra("contact_name");
         String phone = getIntent().getStringExtra("contact_phone");
@@ -34,13 +43,21 @@ public class ContactDetailsActivity extends AppCompatActivity {
         contactPhoneNumber.setText(phone);
         contactAddress.setText(address);
 
-        // Set the contact photo if URI string is not null or empty
+        // Use the provided snippet here to load the photo
         if (photoUriString != null && !photoUriString.isEmpty()) {
             Uri photoUri = Uri.parse(photoUriString);
-            contactPhoto.setImageURI(photoUri);
-        } else {
-            // Optionally set a default or placeholder image if no photo is provided
-            contactPhoto.setImageResource(R.mipmap.ic_launcher); // Use a default/placeholder image resource
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(photoUri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                contactPhoto.setImageBitmap(bitmap);
+                inputStream.close(); // Don't forget to close the InputStream
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, "File not found", e);
+            } catch (SecurityException e) {
+                Log.e(TAG, "Security Exception: Do not have permission to access this file", e);
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: Error closing input stream", e);
+            }
         }
 
         // Dial action
@@ -55,6 +72,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

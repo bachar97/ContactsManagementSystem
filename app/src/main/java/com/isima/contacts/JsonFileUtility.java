@@ -31,10 +31,10 @@ public class JsonFileUtility {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 Contact contact = new Contact(
-                        jsonObject.getString("photoUri"),
                         jsonObject.getString("name"),
                         jsonObject.getString("phoneNumber"),
-                        jsonObject.getString("address"));
+                        jsonObject.getString("address"),
+                        jsonObject.getString("photoUri"));
                 contacts.add(contact);
             }
         } catch (Exception e) {
@@ -51,6 +51,7 @@ public class JsonFileUtility {
                 jsonObject.put("name", contact.getName());
                 jsonObject.put("phoneNumber", contact.getPhoneNumber());
                 jsonObject.put("address", contact.getAddress());
+                jsonObject.put("photoUri", contact.getPhotoUri()); // Include the photo URI
                 jsonArray.put(jsonObject);
             }
             File file = new File(context.getFilesDir(), FILE_NAME);
