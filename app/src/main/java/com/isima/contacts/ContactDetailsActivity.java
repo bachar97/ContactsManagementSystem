@@ -22,10 +22,10 @@ public class ContactDetailsActivity extends AppCompatActivity {
         contactName = findViewById(R.id.contactName);
         contactPhoneNumber = findViewById(R.id.contactPhoneNumber);
         contactAddress = findViewById(R.id.contactAddress);
-        contactPhoto = findViewById(R.id.contactPhoto);
+        //contactPhoto = findViewById(R.id.contactPhoto);
         
         // Assuming callButton was intended for initiating phone calls and was correctly set up before
-        //callButton = findViewById(R.id.callButton); // Ensure this ID exists in your XML
+        callButton = findViewById(R.id.callButton); // Ensure this ID exists in your XML
 
         // Assume contact details are passed via intent
         String name = getIntent().getStringExtra("contact_name");

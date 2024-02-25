@@ -38,8 +38,11 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ContactsAdapter(contacts, new ContactsAdapter.ContactClickListener() {
             @Override
             public void onContactClick(Contact contact) {
-                // Handle the contact click event
-                // For example, you could start a new activity with the contact details
+                Intent intent = new Intent(MainActivity.this, ContactDetailsActivity.class);
+                intent.putExtra("contact_name", contact.getName());
+                intent.putExtra("contact_phone", contact.getPhoneNumber());
+                // Add other contact details as needed
+                startActivity(intent);
             }
         });
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
@@ -48,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         fabAddContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Intent to open add contact activity
-                // Example: Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
-                // startActivity(intent);
+                // Intent to open AddContactActivity
+                Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
+                startActivity(intent);
             }
         });
 
