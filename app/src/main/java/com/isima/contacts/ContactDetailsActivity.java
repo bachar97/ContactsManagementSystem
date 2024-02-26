@@ -10,8 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -70,9 +73,18 @@ public class ContactDetailsActivity extends AppCompatActivity {
         // Enable the back arrow in the ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true); // Ensure the home icon is displayed
         }
-    }
 
+        // Set click listener for the back arrow
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarContactDetails);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed(); // Go back when the back arrow is clicked
+            }
+        });
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
