@@ -13,6 +13,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ContactsAdapter.ContactClickListener {
 
+    private List<Contact> contacts = new ArrayList<>();
+
     private RecyclerView recyclerViewContacts;
     private FloatingActionButton fabAddContact;
     private SearchView searchView;
@@ -69,9 +71,27 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
             String name = data.getStringExtra("contact_name");
             String phone = data.getStringExtra("contact_phone");
             String address = data.getStringExtra("contact_address");
-            String photo = data.getStringExtra("contact_photo");
-            Contact newContact = new Contact(name, phone, address, photo);
-            adapter.addContact(newContact);
+            String photoUri = data.getStringExtra("contact_photo");
+            boolean isEditMode = data.getBooleanExtra("edit_mode", false);
+
+            if (isEditMode) {
+                // Find and update the contact
+                for (Contact contact : contacts) {
+                    if (contact.getName().equals(name)) {
+                        contact.setPhoneNumber(phone);
+                        contact.setAddress(address);
+                        contact.setPhotoUri(photoUri);
+                        break;
+                    }
+                }
+            } else {
+                // New contact
+                contacts.add(new Contact(name, phone, address, photoUri));
+            }
+
+            // Update the adapter with the modified list and refresh the RecyclerView
+            adapter.setContacts(contacts); // Assuming you have a method in adapter to set the whole list
+            adapter.notifyDataSetChanged();
         }
     }
 

@@ -49,7 +49,27 @@ public class AddContactActivity extends AppCompatActivity {
             mGetContent.launch("image/*");
         });
 
-        saveButton.setOnClickListener(view -> saveContact());
+        boolean isEditMode = getIntent().getBooleanExtra("edit_mode", false);
+        if (isEditMode) {
+            // Populate the fields with existing contact details
+            nameEditText.setText(getIntent().getStringExtra("contact_name"));
+            phoneEditText.setText(getIntent().getStringExtra("contact_phone"));
+            addressEditText.setText(getIntent().getStringExtra("contact_address"));
+            String photoUri = getIntent().getStringExtra("contact_photo");
+            if (photoUri != null && !photoUri.isEmpty()) {
+                contactPhotoImageView.setImageURI(Uri.parse(photoUri));
+            }
+        }
+
+        saveButton.setOnClickListener(view -> {
+            if (isEditMode) {
+                // Handle saving edited contact
+                saveEditedContact();
+            } else {
+                // Handle saving new contact
+                saveContact();
+            }
+        });
     }
 
     private void saveContact() {
@@ -70,4 +90,27 @@ public class AddContactActivity extends AppCompatActivity {
         }
         finish();
     }
+
+    // In AddContactActivity
+
+    private void saveEditedContact() {
+        Intent replyIntent = new Intent();
+        if (nameEditText.getText().toString().trim().isEmpty() || phoneEditText.getText().toString().trim().isEmpty()) {
+            setResult(RESULT_CANCELED, replyIntent);
+        } else {
+            String name = nameEditText.getText().toString();
+            String phone = phoneEditText.getText().toString();
+            String address = addressEditText.getText().toString();
+            replyIntent.putExtra("contact_name", name);
+            replyIntent.putExtra("contact_phone", phone);
+            replyIntent.putExtra("contact_address", address);
+            if (imageUri != null) {
+                replyIntent.putExtra("contact_photo", imageUri.toString());
+            }
+            replyIntent.putExtra("edit_mode", true);
+            setResult(RESULT_OK, replyIntent);
+        }
+        finish();
+    }
+
 }

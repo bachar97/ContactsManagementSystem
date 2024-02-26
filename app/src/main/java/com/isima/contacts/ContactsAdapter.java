@@ -86,4 +86,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public interface ContactClickListener {
         void onContactClick(Contact contact);
     }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contactList = contacts;
+        this.contactListFiltered = new ArrayList<>(contacts); // If you're filtering, update this list too
+        notifyDataSetChanged();
+    }
+
 }
