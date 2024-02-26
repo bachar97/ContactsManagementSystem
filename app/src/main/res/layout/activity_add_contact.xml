@@ -1,53 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".AddContactActivity">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/contact_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@android:drawable/ic_menu_camera"
-        android:contentDescription="@string/contact_photo" />
+        android:src="@android:drawable/ic_menu_camera" />
 
     <Button
         android:id="@+id/button_upload_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/upload_photo" />
+        android:text="Upload Photo" />
 
     <EditText
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/name"
-        android:inputType="textPersonName" />
+        android:hint="Name" />
 
     <EditText
         android:id="@+id/editTextPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/phone"
-        android:inputType="phone" />
+        android:hint="Phone" />
 
     <EditText
         android:id="@+id/editTextAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/address"
-        android:inputType="textPostalAddress" />
+        android:hint="Address" />
 
     <Button
         android:id="@+id/buttonSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/save" />
+        android:text="Save" />
 
 </LinearLayout>
