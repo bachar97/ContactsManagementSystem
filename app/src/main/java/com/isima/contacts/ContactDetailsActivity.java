@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,13 +74,16 @@ public class ContactDetailsActivity extends AppCompatActivity {
             intent.putExtra("contact_phone", phone);
             intent.putExtra("contact_address", address);
             intent.putExtra("contact_photo", photoUriString);
-            intent.putExtra("edit_mode", true); // Indicate this is an edit operation
+            intent.putExtra("edit_mode", true);
             startActivity(intent);
         });
 
-        // Delete action (implementation needed based on your app's data handling)
         deleteIcon.setOnClickListener(v -> {
-            // Handle delete operation
+            Intent data = new Intent();
+            data.putExtra("contact_phone", phone);
+            data.putExtra("delete", true);
+            setResult(RESULT_OK, data);
+            finish();
         });
     }
 

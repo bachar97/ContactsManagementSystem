@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
             boolean isEditMode = data.getBooleanExtra("edit_mode", false);
 
             if (isEditMode) {
-                // Find and update the contact
                 for (Contact contact : contacts) {
                     if (contact.getName().equals(name)) {
                         contact.setPhoneNumber(phone);
@@ -85,12 +84,10 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                     }
                 }
             } else {
-                // New contact
                 contacts.add(new Contact(name, phone, address, photoUri));
             }
 
-            // Update the adapter with the modified list and refresh the RecyclerView
-            adapter.setContacts(contacts); // Assuming you have a method in adapter to set the whole list
+            adapter.setContacts(contacts);
             adapter.notifyDataSetChanged();
         }
     }

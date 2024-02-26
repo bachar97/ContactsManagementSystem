@@ -14,26 +14,25 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     private List<Contact> contactList;
     private List<Contact> contactListFiltered;
-    private ContactClickListener listener; // Add listener
+    private ContactClickListener listener;
 
-    // Constructor modified to include the listener
     public ContactsAdapter(List<Contact> contactList, ContactClickListener listener) {
         this.contactList = contactList;
         this.contactListFiltered = new ArrayList<>(contactList);
-        this.listener = listener; // Set listener
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public ContactsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false);
-        return new ViewHolder(view); // No need to pass listener here anymore
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ContactsAdapter.ViewHolder holder, int position) {
         Contact contact = contactListFiltered.get(position);
-        holder.bind(contact, listener); // Bind contact and listener
+        holder.bind(contact, listener);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView contactName, contactPhoneNumber;
 
-        public ViewHolder(@NonNull View itemView) { // No need to include listener in constructor
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             contactName = itemView.findViewById(R.id.contactName);
             contactPhoneNumber = itemView.findViewById(R.id.contactPhoneNumber);
@@ -59,7 +58,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                 public void onClick(View view) {
                     // Use contact directly, no need to access contactListFiltered
                     if (listener != null) {
-                        listener.onContactClick(contact); // Use contact passed in bind method
+                        listener.onContactClick(contact);
                     }
                 }
             });
@@ -79,17 +78,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     public void addContact(Contact contact) {
         contactList.add(contact);
-        notifyDataSetChanged(); // Notify the adapter to refresh the list
+        notifyDataSetChanged();
     }
 
-    // Contact click listener interface
     public interface ContactClickListener {
         void onContactClick(Contact contact);
     }
 
     public void setContacts(List<Contact> contacts) {
         this.contactList = contacts;
-        this.contactListFiltered = new ArrayList<>(contacts); // If you're filtering, update this list too
+        this.contactListFiltered = new ArrayList<>(contacts);
         notifyDataSetChanged();
     }
 
