@@ -91,8 +91,6 @@ public class AddContactActivity extends AppCompatActivity {
         finish();
     }
 
-    // In AddContactActivity
-
     private void saveEditedContact() {
         Intent replyIntent = new Intent();
         if (nameEditText.getText().toString().trim().isEmpty() || phoneEditText.getText().toString().trim().isEmpty()) {
